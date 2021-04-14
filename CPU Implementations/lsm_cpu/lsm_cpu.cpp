@@ -36,8 +36,9 @@ int* merge(int *a, int *b, int n1, int n2){
 void insert_lsm(int key, int value, lsm_tree* tree){
 	int node = key;
 	int i = tree->ptr_for_c0;
-	while(i>=0 && tree->C_0[i] > key){
+	while(i>0 && tree->C_0[i] > key){
 		tree->C_0[i+1] = tree->C_0[i];
+		i--;
 	}
 	tree->C_0[i] = key;
 	tree->ptr_for_c0 += 1;

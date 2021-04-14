@@ -1,8 +1,8 @@
-#ifndef _SDT_GPU_H_
-#define _SDT_GPU_H_
+#ifndef _LSM_CPU_H
+#define _LSM_CPU_H
 
 #define MEM_ARRAY_SIZE 128  // size of array in memory
-#define LEVEL 7 // depth of the log structured tree. 1 level is in main memory, (k-1) levels are on the disk
+#define LEVEL 12 // depth of the log structured tree. 1 level is in main memory, (k-1) levels are on the disk
 
 struct node{
 	int key;
