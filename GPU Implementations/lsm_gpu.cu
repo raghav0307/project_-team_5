@@ -23,6 +23,7 @@ __host__ __device__ void bitonicSortPower2(int *array, int n) {
   for (int k = 2; k <= n; k *= 2)
     for (int j = k / 2; j > 0; j /= 2)
       bitonicSortKernel<<<blocks, THREADS_PER_BLOCK>>>(array, j, k, n);
+	  cudaDeviceSynchronize();
 }
 
 __host__ __device__ int maxPowerLessThan(int n) {
@@ -63,12 +64,14 @@ __global__ void insert_in_lsm(int key, int value, lsm_tree **tree, int bucket){
 		int i=0;
 		while(i<LEVEL-1 && tree[bucket]->ptr_for_ci[i] >= tree[bucket]->max_size_for_ci[i]){
 			append_to_array<<<tree[bucket]->ptr_for_ci[i]/32, 32>>>(tree[bucket]->C_i[i+1], tree[bucket]->C_i[i], tree[bucket]->ptr_for_ci[i+1], tree[bucket]->ptr_for_ci[i]);
+			cudaDeviceSynchronize();
 			tree[bucket]->ptr_for_ci[i+1] += tree[bucket]->ptr_for_ci[i];
 			tree[bucket]->ptr_for_ci[i] = 0;
 			bitonicSort(tree[bucket]->C_i[i+1], tree[bucket]->ptr_for_ci[i+1]);
 			i+=1;	
 		}
 		append_to_array<<<tree[bucket]->ptr_for_ci[0]/32, 32>>>(tree[bucket]->C_i[0], tree[bucket]->C_0, tree[bucket]->ptr_for_ci[0], tree[bucket]->ptr_for_c0);
+		cudaDeviceSynchronize();
 		tree[bucket]->ptr_for_ci[0] += tree[bucket]->ptr_for_c0;
 		tree[bucket]->ptr_for_c0 = 0;
 		bitonicSort(tree[bucket]->C_i[0], tree[bucket]->ptr_for_ci[0]);
@@ -90,6 +93,7 @@ __global__ void delete_key(int key, lsm_tree **tree, bool *result, int *index){
 		if(level == 0){
 			if(tree[bucket]->ptr_for_c0 > 0){
 				search<<<tree[bucket]->ptr_for_c0/32, 32>>>(tree[bucket]->C_0, tree[bucket]->ptr_for_c0, key, index);
+				cudaDeviceSynchronize();
 				if(*index != -1){
 					for(int i=*index; i<tree[bucket]->ptr_for_c0-1;i++){
 						tree[bucket]->C_0[i] = tree[bucket]->C_0[i+1];
@@ -103,6 +107,7 @@ __global__ void delete_key(int key, lsm_tree **tree, bool *result, int *index){
 			level--;
 			if(tree[bucket]->ptr_for_ci[level] > 0){
 				search<<<tree[bucket]->ptr_for_ci[level]/32, 32>>>(tree[bucket]->C_i[level], tree[bucket]->ptr_for_ci[level], key, index);
+				cudaDeviceSynchronize();
 				if(*index != -1){
 					for(int j=*index; j<tree[bucket]->ptr_for_ci[level]-1;j++){
 						tree[bucket]->C_i[level][j] = tree[bucket]->C_i[level][j+1];
