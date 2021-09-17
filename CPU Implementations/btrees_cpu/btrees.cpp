@@ -10,6 +10,7 @@ btreeNode *initBtree() {
   btreeNode *btree = (btreeNode *)malloc(sizeof(btreeNode));
   btree->isLeaf = true;
   btree->numKeys = 0;
+  return btree;
 }
 
 int btreeNodeSearchPos(btreeNode *node, int key) {
@@ -17,12 +18,6 @@ int btreeNodeSearchPos(btreeNode *node, int key) {
   while (pos < node->numKeys && key > node->values[pos]) {
     pos++;
   }
-  // Debug
-  // std::cout << "pos: " << pos << " key: " << key << " values: ";
-  // for (auto x : node->values) {
-  //   std::cout << x << " ";
-  // }
-  // std::cout << std::endl;
   return pos;
 }
 
@@ -31,12 +26,6 @@ int btreeNodeSearchPosUpperBound(btreeNode *node, int key) {
   while (pos < node->numKeys && key >= node->values[pos]) {
     pos++;
   }
-  // Debug
-  // std::cout << "pos: " << pos << " key: " << key << " values: ";
-  // for (auto x : node->values) {
-  //   std::cout << x << " ";
-  // }
-  // std::cout << std::endl;
   return pos;
 }
 
@@ -47,12 +36,6 @@ void btreeNodeInsertKey(btreeNode *node, int key) {
   }
   node->values[pos] = key;
   node->numKeys++;
-  // Debug
-  // std::cout << "numKeys: " << node->numKeys << " values: ";
-  // for (auto x : node->values) {
-  //   std::cout << x << " ";
-  // }
-  // std::cout << std::endl;
 }
 
 void btreeNodeInsertKeyAndChild(btreeNode *node, int key,
@@ -65,12 +48,6 @@ void btreeNodeInsertKeyAndChild(btreeNode *node, int key,
   node->values[pos] = key;
   node->pointer[pos + 1] = childNode;
   node->numKeys++;
-  // Debug
-  // std::cout << "INSERT CHILD: numKeys: " << numKeys << " values: ";
-  // for (auto x : values) {
-  //   std::cout << x << " ";
-  // }
-  // std::cout << std::endl;
 }
 
 btreeNode *btreeNodeSplitNode(btreeNode *node, int *median) {
@@ -89,18 +66,6 @@ btreeNode *btreeNodeSplitNode(btreeNode *node, int *median) {
   node->numKeys = medianPos;
   *median = node->values[medianPos];
   node->values[medianPos] = 0;
-  // Debug
-  // std::cout << "splitting node\n";
-  // std::cout << "leftNode keys: " << node->numKeys << " values: ";
-  // for (auto x : node->values) {
-  //   std::cout << x << " ";
-  // }
-  // std::cout << std::endl;
-  // std::cout << "rightNode keys: " << rightSplitNode->numKeys << " values:";
-  // for (auto x : rightSplitNode->values) {
-  //   std::cout << x << " ";
-  // }
-  // std::cout << std::endl;
   return rightSplitNode;
 }
 
@@ -116,7 +81,6 @@ btreeNode *btreeInsertHelper(btreeNode *node, int *median, int key) {
     }
   }
   if (node->numKeys == NODE_LENGTH) {
-    // std::cout << "node is full\n";
     btreeNode *rightSplitNode = btreeNodeSplitNode(node, median);
     return rightSplitNode;
   } else {
@@ -128,7 +92,6 @@ btreeNode *btreeInsert(btreeNode *root, int key) {
   int *median = (int *)malloc(sizeof(int));
   btreeNode *rightSplitNode = btreeInsertHelper(root, median, key);
   if (rightSplitNode) {
-    // std::cout << "creating a new root with value " << *median << "\n";
     btreeNode *newRoot = (btreeNode *)malloc(sizeof(btreeNode));
     newRoot->isLeaf = false;
     newRoot->numKeys = 1;
