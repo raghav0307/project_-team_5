@@ -14,8 +14,10 @@ In this project we aim at comparing the serial implementations of these indexing
 
 ## Results
 
-| | Insertion | Deletion |
-|---|---|---|---|---|
+### Timing Results
+
+| | Insertion (in seconds) | Deletion (in seconds) |
+|---|---|---|
 | CPU (B-Trees) | 0.000337428 | 0.00167183 |
 | CPU (LSM Trees) | 0.00049103 | 0.0058738 |
 | GPU | 0.00030427 | 0.00123993 |
@@ -23,6 +25,6 @@ In this project we aim at comparing the serial implementations of these indexing
 ### Speedup
 
 | | Insertion | Deletion |
-|---|---|---|---|---|
+|---|---|---|
 | GPU vs CPU (B-Trees) | 1.11x | 1.30x |
 | GPU vs CPU (LSM Trees) | 1.61x | 4.73x |
